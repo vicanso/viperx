@@ -25,15 +25,15 @@ import (
 type ViperX struct {
 	// ins viper instance
 	ins *viper.Viper
-	// configType config type
-	configType string
+	// ConfigType config type
+	ConfigType string
 }
 
-// NewViperX new viperx
-func NewViperX(configType string) *ViperX {
+// New new viperx
+func New(configType string) *ViperX {
 	viperX := &ViperX{
 		ins:        viper.New(),
-		configType: configType,
+		ConfigType: configType,
 	}
 	viperX.ins.SetConfigType(configType)
 	return viperX
@@ -43,7 +43,7 @@ func NewViperX(configType string) *ViperX {
 func (vx *ViperX) ReadConfig(readers ...io.Reader) error {
 	for _, reader := range readers {
 		v := viper.New()
-		v.SetConfigType(vx.configType)
+		v.SetConfigType(vx.ConfigType)
 		err := v.ReadConfig(reader)
 		if err != nil {
 			return err

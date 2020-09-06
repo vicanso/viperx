@@ -24,7 +24,7 @@ import (
 )
 
 func newTestViper() *ViperX {
-	vx := NewViperX("yml")
+	vx := New("yml")
 	defaultValue := `
 bValue: true
 iValue: 1
