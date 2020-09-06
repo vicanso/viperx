@@ -34,6 +34,7 @@ uiValue: 4
 ui32Value: 5
 ui64Value: 6
 f64Value: 7.1
+sValue: abcd
 `
 	value := `
 tValue: 2020-09-06T01:51:16.749Z
@@ -139,6 +140,15 @@ func TestGetFloat64(t *testing.T) {
 	assert.Equal(7.1, vx.GetFloat64("f64Value"))
 	assert.Equal(7.1, vx.GetFloat64Default("f64Value", 7.2))
 	assert.Equal(7.2, vx.GetFloat64Default(unknown, 7.2))
+}
+
+func TestGetString(t *testing.T) {
+	assert := assert.New(t)
+	vx := newTestViper()
+	assert.Empty(vx.GetString(unknown))
+	assert.Equal("abcd", vx.GetString("sValue"))
+	assert.Equal("abcd", vx.GetStringDefault("sValue", "def"))
+	assert.Equal("def", vx.GetStringDefault(unknown, "def"))
 }
 
 func TestGetTime(t *testing.T) {

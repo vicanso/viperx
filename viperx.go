@@ -165,6 +165,21 @@ func (vx *ViperX) GetFloat64Default(key string, defaultValue float64) float64 {
 	return v
 }
 
+// GetString get value(string) from config
+func (vx *ViperX) GetString(key string) string {
+	return vx.ins.GetString(key)
+}
+
+// GetStringDefault get value(string) from config,
+// if value is 0, return the default value
+func (vx *ViperX) GetStringDefault(key, defaultValue string) string {
+	v := vx.ins.GetString(key)
+	if len(v) == 0 {
+		return defaultValue
+	}
+	return v
+}
+
 // GetTime get value(time.Time) from config
 func (vx *ViperX) GetTime(key string) time.Time {
 	return vx.ins.GetTime(key)
