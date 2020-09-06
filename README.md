@@ -41,5 +41,5 @@ envValue: __abc__
 		bytes.NewBufferString(defaultValue),
 		bytes.NewBufferString(value),
 	)
-    fmt.Println(vx.GetInt("iValue"))
+	fmt.Println(vx.GetInt("iValue"))
 ```
