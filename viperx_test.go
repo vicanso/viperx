@@ -35,6 +35,8 @@ ui32Value: 5
 ui64Value: 6
 f64Value: 7.1
 sValue: abcd
+smValue:
+  c: true
 `
 	value := `
 tValue: 2020-09-06T01:51:16.749Z
@@ -78,6 +80,7 @@ func TestGetBool(t *testing.T) {
 	vx := newTestViper()
 	assert.False(vx.GetBool(unknown))
 	assert.True(vx.GetBool("bValue"))
+	assert.True(vx.GetBool("smValue.c"))
 }
 
 func TestGetInt(t *testing.T) {

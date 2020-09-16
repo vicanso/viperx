@@ -40,7 +40,11 @@ func New(configType string) *ViperX {
 
 // ReadConfig read config from reader
 func (vx *ViperX) ReadConfig(readers ...io.Reader) error {
-	for _, reader := range readers {
+	size := len(readers)
+	if size == 0 {
+		return nil
+	}
+	for _, reader := range readers[0 : size-1] {
 		v := viper.New()
 		v.SetConfigType(vx.ConfigType)
 		err := v.ReadConfig(reader)
@@ -51,7 +55,7 @@ func (vx *ViperX) ReadConfig(readers ...io.Reader) error {
 			vx.SetDefault(k, v)
 		}
 	}
-	return nil
+	return vx.Viper.ReadConfig(readers[size-1])
 }
 
 // GetIntDefault get value(int) from config,
