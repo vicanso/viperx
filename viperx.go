@@ -219,3 +219,13 @@ func (vx *ViperX) GetStringFromENV(key string) string {
 	}
 	return v
 }
+
+// GetStringFromENVDefault get string for env, it will use default value if len(value) is 0
+func (vx *ViperX) GetStringFromENVDefault(key, defaultValue string) string {
+	v := vx.GetString(key)
+	value := os.Getenv(v)
+	if len(value) != 0 {
+		return value
+	}
+	return defaultValue
+}

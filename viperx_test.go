@@ -276,6 +276,7 @@ func TestGetStringFromENV(t *testing.T) {
 	assert.Empty(vx.GetStringFromENV(unknown))
 	value := "__abc__"
 	assert.Equal(value, vx.GetStringFromENV("envValue"))
+	assert.Equal("def", vx.GetStringFromENVDefault("envValue", "def"))
 	envValue := "__d__"
 	err := os.Setenv(value, envValue)
 	assert.Nil(err)
