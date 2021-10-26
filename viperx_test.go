@@ -58,7 +58,8 @@ smssValue:
   - d
   - e
   - f
-envValue: __abc__
+envValue:
+  uri: __abc__
 `
 
 	err := vx.ReadConfig(
@@ -275,10 +276,10 @@ func TestGetStringFromENV(t *testing.T) {
 	vx := newTestViper()
 	assert.Empty(vx.GetStringFromENV(unknown))
 	value := "__abc__"
-	assert.Equal(value, vx.GetStringFromENV("envValue"))
+	assert.Equal(value, vx.GetStringFromENV("envValue.uri"))
 	assert.Equal("def", vx.GetStringFromENVDefault("envValue", "def"))
 	envValue := "__d__"
-	err := os.Setenv(value, envValue)
+	err := os.Setenv(toENVKey("envValue.uri"), envValue)
 	assert.Nil(err)
-	assert.Equal(envValue, vx.GetStringFromENV("envValue"))
+	assert.Equal(envValue, vx.GetStringFromENV("envValue.uri"))
 }

@@ -17,6 +17,7 @@ package viperx
 import (
 	"io"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/spf13/viper"
@@ -26,6 +27,14 @@ type ViperX struct {
 	*viper.Viper
 	// ConfigType config type
 	ConfigType string
+}
+
+func toENVKey(key string) string {
+	arr := strings.Split(key, ".")
+	for index, k := range arr {
+		arr[index] = strings.ToUpper(k)
+	}
+	return strings.Join(arr, "_")
 }
 
 // New new viperx
@@ -212,20 +221,18 @@ func (vx *ViperX) GetStringMapStringSliceDefault(key string, defaultValue map[st
 // then use the value as key, get result from env,
 // if len(value) is 0, then return the config's value, otherwise return the env's value
 func (vx *ViperX) GetStringFromENV(key string) string {
-	v := vx.GetString(key)
-	value := os.Getenv(v)
+	value := os.Getenv(toENVKey(key))
 	if len(value) != 0 {
 		return value
 	}
-	return v
+	return vx.GetString(key)
 }
 
 // GetStringFromENVDefault get string for env, it will use default value if len(value) is 0
 func (vx *ViperX) GetStringFromENVDefault(key, defaultValue string) string {
-	v := vx.GetString(key)
-	value := os.Getenv(v)
+	value := os.Getenv(toENVKey(key))
 	if len(value) != 0 {
 		return value
 	}
-	return defaultValue
+	return vx.GetStringDefault(key, defaultValue)
 }
