@@ -217,9 +217,9 @@ func (vx *ViperX) GetStringMapStringSliceDefault(key string, defaultValue map[st
 	return v
 }
 
-// GetStringFromENV get string from env, it will get the value from config by key,
-// then use the value as key, get result from env,
-// if len(value) is 0, then return the config's value, otherwise return the env's value
+// GetStringFromENV returns the value from env first,
+// then get from config if not exits.
+// The key of env will be different of config, for example, the key `redis.uri` will be `REDIS_URI`.
 func (vx *ViperX) GetStringFromENV(key string) string {
 	value := os.Getenv(toENVKey(key))
 	if len(value) != 0 {
@@ -228,11 +228,34 @@ func (vx *ViperX) GetStringFromENV(key string) string {
 	return vx.GetString(key)
 }
 
-// GetStringFromENVDefault get string for env, it will use default value if len(value) is 0
+// GetStringFromENVDefault returns the value of `GetStringFromENV` if exits, otherwise returns the default value.
 func (vx *ViperX) GetStringFromENVDefault(key, defaultValue string) string {
 	value := os.Getenv(toENVKey(key))
 	if len(value) != 0 {
 		return value
 	}
 	return vx.GetStringDefault(key, defaultValue)
+}
+
+// GetDurationFromENV returns the duration of key,
+// it's the same as `GetStringFromENV` but returns duration.
+func (vx *ViperX) GetDurationFromENV(key string) time.Duration {
+	value := os.Getenv(toENVKey(key))
+	if len(value) != 0 {
+		v, _ := time.ParseDuration(value)
+		return v
+	}
+	return vx.GetDuration(key)
+}
+
+// GetDurationFromENVDefault returns the value of `GetDurationFromENV` if exits, otherwise returns the default value
+func (vx *ViperX) GetDurationFromENVDefault(key string, defaultValue time.Duration) time.Duration {
+	value := os.Getenv(toENVKey(key))
+	if len(value) != 0 {
+		v, _ := time.ParseDuration(value)
+		if v != 0 {
+			return v
+		}
+	}
+	return vx.GetDurationDefault(key, defaultValue)
 }

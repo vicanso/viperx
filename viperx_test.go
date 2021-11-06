@@ -60,6 +60,7 @@ smssValue:
   - f
 envValue:
   uri: __abc__
+  timeout: 3s
 `
 
 	err := vx.ReadConfig(
@@ -277,9 +278,22 @@ func TestGetStringFromENV(t *testing.T) {
 	assert.Empty(vx.GetStringFromENV(unknown))
 	value := "__abc__"
 	assert.Equal(value, vx.GetStringFromENV("envValue.uri"))
+	// 不存在的取默认值
 	assert.Equal("def", vx.GetStringFromENVDefault("envValue", "def"))
+
+	// 设置env配置
 	envValue := "__d__"
 	err := os.Setenv(toENVKey("envValue.uri"), envValue)
 	assert.Nil(err)
 	assert.Equal(envValue, vx.GetStringFromENV("envValue.uri"))
+
+	timeout := 3 * time.Second
+	assert.Equal(timeout, vx.GetDurationFromENV("envValue.timeout"))
+	// 不存在的取默认值
+	assert.Equal(5*time.Second, vx.GetDurationFromENVDefault("envValue.timeout1", 5*time.Second))
+
+	// 设置env配置
+	err = os.Setenv(toENVKey("envValue.timeout"), "4s")
+	assert.Nil(err)
+	assert.Equal(4*time.Second, vx.GetDurationFromENV("envValue.timeout"))
 }
