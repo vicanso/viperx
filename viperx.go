@@ -17,6 +17,7 @@ package viperx
 import (
 	"io"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -258,4 +259,15 @@ func (vx *ViperX) GetDurationFromENVDefault(key string, defaultValue time.Durati
 		}
 	}
 	return vx.GetDurationDefault(key, defaultValue)
+}
+
+// GetIntFromENV returns the int of key,
+// it's the same as `GetStringFromENV` but returns int.
+func (vx *ViperX) GetIntFromENV(key string) int {
+	value := os.Getenv(toENVKey(key))
+	if len(value) != 0 {
+		v, _ := strconv.Atoi(value)
+		return v
+	}
+	return vx.GetInt(key)
 }
