@@ -62,6 +62,7 @@ envValue:
   uri: __abc__
   timeout: 3s
   i: 1
+  b: true
 `
 
 	err := vx.ReadConfig(
@@ -311,4 +312,18 @@ func TestGetIntFromENV(t *testing.T) {
 	err := os.Setenv(toENVKey("envValue.i"), envValue)
 	assert.Nil(err)
 	assert.Equal(2, vx.GetIntFromENV("envValue.i"))
+}
+
+func TestGetBoolFromENV(t *testing.T) {
+	assert := assert.New(t)
+	vx := newTestViper()
+	assert.False(vx.GetBoolFromENV(unknown))
+
+	assert.True(vx.GetBoolFromENV("envValue.b"))
+
+	// 设置env配置
+	envValue := "false"
+	err := os.Setenv(toENVKey("envValue.b"), envValue)
+	assert.Nil(err)
+	assert.False(vx.GetBoolFromENV("envValue.b"))
 }

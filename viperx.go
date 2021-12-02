@@ -231,11 +231,11 @@ func (vx *ViperX) GetStringFromENV(key string) string {
 
 // GetStringFromENVDefault returns the value of `GetStringFromENV` if exits, otherwise returns the default value.
 func (vx *ViperX) GetStringFromENVDefault(key, defaultValue string) string {
-	value := os.Getenv(toENVKey(key))
-	if len(value) != 0 {
+	value := vx.GetStringFromENV(key)
+	if value != "" {
 		return value
 	}
-	return vx.GetStringDefault(key, defaultValue)
+	return defaultValue
 }
 
 // GetDurationFromENV returns the duration of key,
@@ -251,14 +251,11 @@ func (vx *ViperX) GetDurationFromENV(key string) time.Duration {
 
 // GetDurationFromENVDefault returns the value of `GetDurationFromENV` if exits, otherwise returns the default value
 func (vx *ViperX) GetDurationFromENVDefault(key string, defaultValue time.Duration) time.Duration {
-	value := os.Getenv(toENVKey(key))
-	if len(value) != 0 {
-		v, _ := time.ParseDuration(value)
-		if v != 0 {
-			return v
-		}
+	value := vx.GetDurationFromENV(key)
+	if value != 0 {
+		return value
 	}
-	return vx.GetDurationDefault(key, defaultValue)
+	return defaultValue
 }
 
 // GetIntFromENV returns the int of key,
@@ -270,4 +267,23 @@ func (vx *ViperX) GetIntFromENV(key string) int {
 		return v
 	}
 	return vx.GetInt(key)
+}
+
+// GetIntFromENVDefault returns the value of `GetIntFromENV` if exists, otherwist returns the default value
+func (vx *ViperX) GetIntFromENVDefault(key string, defaultValue int) int {
+	value := vx.GetIntFromENV(key)
+	if value != 0 {
+		return value
+	}
+	return defaultValue
+}
+
+// GetBoolFromENV return the bool of key
+func (vx *ViperX) GetBoolFromENV(key string) bool {
+	value := strings.ToLower(os.Getenv(toENVKey(key)))
+	if len(value) != 0 {
+		b, _ := strconv.ParseBool(value)
+		return b
+	}
+	return vx.GetBool(key)
 }
