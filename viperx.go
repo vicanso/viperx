@@ -278,7 +278,8 @@ func (vx *ViperX) GetIntFromENVDefault(key string, defaultValue int) int {
 	return defaultValue
 }
 
-// GetBoolFromENV return the bool of key
+// GetBoolFromENV return the bool of key,
+// get the value from env if exists, otherwist get the value from config
 func (vx *ViperX) GetBoolFromENV(key string) bool {
 	value := strings.ToLower(os.Getenv(toENVKey(key)))
 	if len(value) != 0 {
@@ -286,4 +287,24 @@ func (vx *ViperX) GetBoolFromENV(key string) bool {
 		return b
 	}
 	return vx.GetBool(key)
+}
+
+// GetStringSliceFromENV return string slice of key,
+// get the value from env and split to slice by ',' if exists, otherwist get string slice from config
+func (vx *ViperX) GetStringSliceFromENV(key string) []string {
+	value := os.Getenv(toENVKey(key))
+	if len(value) != 0 {
+		return strings.Split(value, ",")
+	}
+	return vx.GetStringSlice(key)
+}
+
+// GetStringSliceFromENVDefault return string slice of key,
+// if it is empty, return the default value
+func (vx *ViperX) GetStringSliceFromENVDefault(key string, defaultValue []string) []string {
+	values := vx.GetStringSliceFromENV(key)
+	if len(values) != 0 {
+		return values
+	}
+	return defaultValue
 }

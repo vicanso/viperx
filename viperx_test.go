@@ -63,6 +63,9 @@ envValue:
   timeout: 3s
   i: 1
   b: true
+  strs:
+  - a
+  - b
 `
 
 	err := vx.ReadConfig(
@@ -326,4 +329,30 @@ func TestGetBoolFromENV(t *testing.T) {
 	err := os.Setenv(toENVKey("envValue.b"), envValue)
 	assert.Nil(err)
 	assert.False(vx.GetBoolFromENV("envValue.b"))
+}
+
+func TestGetStringSliceFromENV(t *testing.T) {
+	assert := assert.New(t)
+	vx := newTestViper()
+	assert.Empty(vx.GetStringSliceFromENV(unknown))
+
+	assert.Equal([]string{
+		"a",
+		"b",
+	}, vx.GetStringSliceFromENV("envValue.strs"))
+
+	// 设置env配置
+	envValue := "d,f"
+	err := os.Setenv(toENVKey("envValue.strs"), envValue)
+	assert.Nil(err)
+	assert.Equal([]string{
+		"d",
+		"f",
+	}, vx.GetStringSliceFromENV("envValue.strs"))
+
+	assert.Equal([]string{
+		"123",
+	}, vx.GetStringSliceFromENVDefault(unknown, []string{
+		"123",
+	}))
 }
