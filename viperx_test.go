@@ -82,6 +82,14 @@ const (
 	unknown = "unknown"
 )
 
+func TestToENVKey(t *testing.T) {
+	assert := assert.New(t)
+	vx := New("yml")
+	assert.Equal("REDIS_URI", vx.toENVKey("redis.uri"))
+	vx.SetENVKeyPrefix("VX_")
+	assert.Equal("VX_REDIS_URI", vx.toENVKey("redis.uri"))
+}
+
 func TestGetBool(t *testing.T) {
 	assert := assert.New(t)
 	vx := newTestViper()
@@ -288,7 +296,7 @@ func TestGetStringFromENV(t *testing.T) {
 
 	// 设置env配置
 	envValue := "__d__"
-	err := os.Setenv(toENVKey("envValue.uri"), envValue)
+	err := os.Setenv(vx.toENVKey("envValue.uri"), envValue)
 	assert.Nil(err)
 	assert.Equal(envValue, vx.GetStringFromENV("envValue.uri"))
 
@@ -298,7 +306,7 @@ func TestGetStringFromENV(t *testing.T) {
 	assert.Equal(5*time.Second, vx.GetDurationFromENVDefault("envValue.timeout1", 5*time.Second))
 
 	// 设置env配置
-	err = os.Setenv(toENVKey("envValue.timeout"), "4s")
+	err = os.Setenv(vx.toENVKey("envValue.timeout"), "4s")
 	assert.Nil(err)
 	assert.Equal(4*time.Second, vx.GetDurationFromENV("envValue.timeout"))
 }
@@ -312,7 +320,7 @@ func TestGetIntFromENV(t *testing.T) {
 
 	// 设置env配置
 	envValue := "2"
-	err := os.Setenv(toENVKey("envValue.i"), envValue)
+	err := os.Setenv(vx.toENVKey("envValue.i"), envValue)
 	assert.Nil(err)
 	assert.Equal(2, vx.GetIntFromENV("envValue.i"))
 }
@@ -326,7 +334,7 @@ func TestGetBoolFromENV(t *testing.T) {
 
 	// 设置env配置
 	envValue := "false"
-	err := os.Setenv(toENVKey("envValue.b"), envValue)
+	err := os.Setenv(vx.toENVKey("envValue.b"), envValue)
 	assert.Nil(err)
 	assert.False(vx.GetBoolFromENV("envValue.b"))
 }
@@ -343,7 +351,7 @@ func TestGetStringSliceFromENV(t *testing.T) {
 
 	// 设置env配置
 	envValue := "d,f"
-	err := os.Setenv(toENVKey("envValue.strs"), envValue)
+	err := os.Setenv(vx.toENVKey("envValue.strs"), envValue)
 	assert.Nil(err)
 	assert.Equal([]string{
 		"d",

@@ -26,16 +26,9 @@ import (
 
 type ViperX struct {
 	*viper.Viper
+	envKeyPrefix string
 	// ConfigType config type
 	ConfigType string
-}
-
-func toENVKey(key string) string {
-	arr := strings.Split(key, ".")
-	for index, k := range arr {
-		arr[index] = strings.ToUpper(k)
-	}
-	return strings.Join(arr, "_")
 }
 
 // New new viperx
@@ -46,6 +39,18 @@ func New(configType string) *ViperX {
 	viperX.Viper = viper.New()
 	viperX.SetConfigType(viperX.ConfigType)
 	return viperX
+}
+
+func (vx *ViperX) SetENVKeyPrefix(prefix string) {
+	vx.envKeyPrefix = prefix
+}
+
+func (vx *ViperX) toENVKey(key string) string {
+	arr := strings.Split(key, ".")
+	for index, k := range arr {
+		arr[index] = strings.ToUpper(k)
+	}
+	return vx.envKeyPrefix + strings.Join(arr, "_")
 }
 
 // ReadConfig read config from reader
@@ -222,7 +227,7 @@ func (vx *ViperX) GetStringMapStringSliceDefault(key string, defaultValue map[st
 // then get from config if not exits.
 // The key of env will be different of config, for example, the key `redis.uri` will be `REDIS_URI`.
 func (vx *ViperX) GetStringFromENV(key string) string {
-	value := os.Getenv(toENVKey(key))
+	value := os.Getenv(vx.toENVKey(key))
 	if len(value) != 0 {
 		return value
 	}
@@ -241,7 +246,7 @@ func (vx *ViperX) GetStringFromENVDefault(key, defaultValue string) string {
 // GetDurationFromENV returns the duration of key,
 // it's the same as `GetStringFromENV` but returns duration.
 func (vx *ViperX) GetDurationFromENV(key string) time.Duration {
-	value := os.Getenv(toENVKey(key))
+	value := os.Getenv(vx.toENVKey(key))
 	if len(value) != 0 {
 		v, _ := time.ParseDuration(value)
 		return v
@@ -261,7 +266,7 @@ func (vx *ViperX) GetDurationFromENVDefault(key string, defaultValue time.Durati
 // GetIntFromENV returns the int of key,
 // it's the same as `GetStringFromENV` but returns int.
 func (vx *ViperX) GetIntFromENV(key string) int {
-	value := os.Getenv(toENVKey(key))
+	value := os.Getenv(vx.toENVKey(key))
 	if len(value) != 0 {
 		v, _ := strconv.Atoi(value)
 		return v
@@ -281,7 +286,7 @@ func (vx *ViperX) GetIntFromENVDefault(key string, defaultValue int) int {
 // GetBoolFromENV return the bool of key,
 // get the value from env if exists, otherwist get the value from config
 func (vx *ViperX) GetBoolFromENV(key string) bool {
-	value := strings.ToLower(os.Getenv(toENVKey(key)))
+	value := strings.ToLower(os.Getenv(vx.toENVKey(key)))
 	if len(value) != 0 {
 		b, _ := strconv.ParseBool(value)
 		return b
@@ -292,7 +297,7 @@ func (vx *ViperX) GetBoolFromENV(key string) bool {
 // GetStringSliceFromENV return string slice of key,
 // get the value from env and split to slice by ',' if exists, otherwist get string slice from config
 func (vx *ViperX) GetStringSliceFromENV(key string) []string {
-	value := os.Getenv(toENVKey(key))
+	value := os.Getenv(vx.toENVKey(key))
 	if len(value) != 0 {
 		return strings.Split(value, ",")
 	}
