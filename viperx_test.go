@@ -86,7 +86,7 @@ func TestToENVKey(t *testing.T) {
 	assert := assert.New(t)
 	vx := New("yml")
 	assert.Equal("REDIS_URI", vx.toENVKey("redis.uri"))
-	vx.SetENVKeyPrefix("VX_")
+	vx.SetENVKeyPrefix("VX")
 	assert.Equal("VX_REDIS_URI", vx.toENVKey("redis.uri"))
 }
 

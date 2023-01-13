@@ -50,7 +50,11 @@ func (vx *ViperX) toENVKey(key string) string {
 	for index, k := range arr {
 		arr[index] = strings.ToUpper(k)
 	}
-	return vx.envKeyPrefix + strings.Join(arr, "_")
+	value := strings.Join(arr, "_")
+	if vx.envKeyPrefix != "" {
+		value = vx.envKeyPrefix + "_" + value
+	}
+	return value
 }
 
 // ReadConfig read config from reader
